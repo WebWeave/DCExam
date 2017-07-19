@@ -1,7 +1,17 @@
 pragma solidity ^0.4.11;
 
+contract Owned {
+    modifier only_owner { if (msg.sender != owner) return; _; }
 
-contract DCExam {
+    event NewOwner(address indexed old, address indexed current);
+
+    function setOwner(address _new) only_owner { NewOwner(owner, _new); owner = _new; }
+
+    address public owner = msg.sender;
+}
+
+
+contract DCExam is Owned {
 
     struct examenDetail {
     string examenNaam;
@@ -15,7 +25,7 @@ contract DCExam {
 
     mapping (uint256 => examenKanidaat) examenOf;
 
-    function newExam(uint256 studentNummer, string examenNaam, uint256 examenCijfer) {
+    function newExam(uint256 studentNummer, string examenNaam, uint256 examenCijfer) only_owner {
 
         examenOf[studentNummer] = examenKanidaat(studentNummer);
 
